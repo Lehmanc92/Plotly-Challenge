@@ -34,7 +34,7 @@ d3.json(url).then(function(data) {
 
     samples.forEach( sample => {
         if (sample.id == currentSubject) {
-            currentID = sample.id
+            currentID = sample
         }
         // console.log(currentID)
     });
@@ -54,9 +54,66 @@ d3.json(url).then(function(data) {
         d3.select("#sample-metadata").append("ul").text(item + ": " + currentMetadata[item]);
     }
 
+// -------------------------------------------------------------------
+
+    // Capturing data for Bar Chart
+
+    console.log(currentID);
+    otuID = currentID.otu_ids;
+    otuValues = currentID.sample_values;
+    otuLabels = currentID.otu_labels;
+
+    top10OTUids = otuID.slice(0,10).map(otuID => `OTU ${otuID}`).reverse();
+    top10OTUvalues = otuValues.slice(0,10).reverse();
+    top10OTUlabels = otuLabels.slice(0,10).reverse(); 
+
+    // console.log(top10OTUlabels);
+
+    // Creating Bar Chart
+
+    var bar_data = [
+        {
+            y:top10OTUids,
+            x:top10OTUvalues,
+            text:top10OTUlabels,
+            type:"bar",
+            orientation: "h"
+        }
+    ];
+
+    var bar_layout = {
+        title: "Top 10 Bacteria Cultures Observed"
+    };
+
+    Plotly.newPlot("bar", bar_data, bar_layout);
+
+// -------------------------------------------------------------------
+
+    // Bubble Chart
+
+    var bubble_data = {
+        x: otuID,
+        y: otuValues,
+        text: otuLabels,
+        mode: "markers",
+        marker: {
+            color: otuID,
+            size: otuValues
+        }
+    };
+
+    var bubble_layout = {
+        showlegend: false
+    };
+
+    Plotly.newPlot("bubble", [bubble_data], [bubble_layout]);
+
+    console.log(otuID);
+    console.log(otuValues);
+    console.log(otuLabels);
+
+
+
 
 });
 
-// Promise Pending
-// const dataPromise = d3.json(url);
-// console.log("Data Promise: ", dataPromise);
